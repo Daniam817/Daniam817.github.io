@@ -1,0 +1,30 @@
+---
+title: "Daniel's World"
+---
+
+## Welcome to my personal webpage!
+
+My name is Daniel Ojeranti
+
+# This is Daniel's awesome website
+
+<img src="images/me4real.jpeg" style="width:75%">
+
+## Heres a subsection
+
+# Links to other websites
+
+Lets link to useful tools for data science:
+
+* [Google](https://www.google.com/)
+* [P8105](https://www.p8105.com/)
+
+# Local image
+
+Picture of dog :
+<img src ="images/dogs.jpg" style = "width:75%">
+
+
+# Link to page within the site
+
+[About me](about.html)
