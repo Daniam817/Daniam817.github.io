@@ -1,68 +1,79 @@
 ---
-title: "Dashboard"
+title: "Instacart Data"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: fill
-    source: embed
+    vertical_layout: scroll
 ---
 
-```{r setup, include=FALSE}
-library(flexdashboard)
-library(p8105.datasets)
+```{r, warning = FALSE, message = F}
 library(tidyverse)
+library(p8105.datasets)
+library(hexbin)
+library(ggridges)
+library(patchwork)
 library(plotly)
-```
-
-```{r}
-data(nyc_airbnb)
-
-nyc_airbnb = 
-  nyc_airbnb %>%
-  mutate(rating = review_scores_location / 2) %>%
-  select(
-    neighbourhood_group, neighbourhood, rating, price, room_type, lat, long) %>%
-  filter(
-    !is.na(rating), 
-    neighbourhood_group == "Manhattan",
-    room_type == "Entire home/apt",
-    price %in% 100:500)
+library(flexdashboard)
+knitr::opts_chunk$set(
+	fig.width = 6, 
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 
 ```
 
-Column {data-width=650}
------------------------------------------------------------------------
+```{r}
+data("instacart")
+instacart.third =
+ instacart %>% 
+  slice_sample(n = 500000  )
+```
 
-### Chart A
+
+### Scatterplot
 
 ```{r}
-nyc_airbnb %>%
-  mutate(text_label = str_c("Price: $", price, "\nRating: ", rating)) %>%  # make a text label showing price and rating
+
+instacart.third %>% 
+	count(aisle) %>% 
+	filter(n > 10000) %>% 
+	mutate(
+		aisle = factor(aisle),
+		aisle = fct_reorder(aisle, n)
+	) %>% 
   plot_ly(
-    x = ~lat, y = ~long, type = "scatter", mode = "markers",
-    color = ~price, text = ~text_label, alpha = 0.5)
+    x = ~aisle, y = ~n, type = "scatter", mode = "markers",
+    color = ~aisle, text = ~aisle, alpha = 0.5)
 ```
 
-Column {data-width=350}
------------------------------------------------------------------------
 
-### Chart B
+### Boxplot
 
 ```{r}
-# Price according to neighborhood
 
-nyc_airbnb %>% 
-  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
-  plot_ly(y = ~price, color = ~neighbourhood, type = "box", colors = "viridis")
+instacart.third %>% 
+	filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>%
+	group_by(aisle) %>% 
+	count(product_name) %>% 
+  plot_ly(x = ~aisle, y = ~product_name, color = ~aisle, type = "box", colors = "viridis")
 ```
 
-### Chart C
+### Bargraph
 
 ```{r}
-nyc_airbnb %>% 
-  count(neighbourhood) %>% 
-  mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
-  plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar", colors = "viridis")
-
+instacart.third %>% 
+  count(aisle) %>% 
+	filter(n > 10000) %>% 
+	mutate(
+		aisle = factor(aisle),
+		aisle = fct_reorder(aisle, n)
+	) %>% 
+  plot_ly(x = ~aisle, y = ~n, color = ~aisle, type = "bar", colors = "viridis")
 ```
-

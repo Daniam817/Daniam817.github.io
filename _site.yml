@@ -3,11 +3,9 @@ output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "About"
+    - text: "Academic and Professional Experience"
       href: about.html
-    - text: "Plots"
-      href: plots.html
-    - text: "Dashboard"
+    - text: "Problem 2 Dashboard"
       href: dashboard.html
     - icon: fa-envelope fa-lg
       href: mailto:<danielojeranti@gmail.com>
